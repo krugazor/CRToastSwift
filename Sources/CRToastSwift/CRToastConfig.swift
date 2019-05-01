@@ -450,7 +450,61 @@ public struct CROptions {
     
     public var captureWindow :Bool = false
 
-    public var toastKeyClassMap : [CRToastOptionKey:Any.Type]
+    public var toastKeyClassMap : [CRToastOptionKey:Any.Type] = [
+        .type:CRToastType.self,
+        .preferredHeight:CGFloat.self,
+        .preferredPadding:Float.self,
+        .presentationType:CRToastPresentationType.self,
+        .underStatusBar:Bool.self,
+        .keepNavigationBarBorder:Bool.self,
+        .identifier:String.self,
+
+        .animationInType:CRToastAnimationType.self,
+        .animationOutType:CRToastAnimationType.self,
+        .animationInDirection:CRToastAnimationDirection.self,
+        .animationOutDirection:CRToastAnimationDirection.self,
+        .animationInTimeInterval:TimeInterval.self,
+        .animationOutTimeInterval:TimeInterval.self,
+        .timeInterval:TimeInterval.self,
+
+        .springDamping:CGFloat.self,
+        .springInitialVelocity:CGFloat.self,
+        .gravityMagnitude:CGFloat.self,
+
+        .text:String.self,
+        .font:UIFont.self,
+        .textColor:UIColor.self,
+        .textAlignment:NSTextAlignment.self,
+        .textShadowColor:UIColor?.self,
+        .textShadowOffset:CGSize.self,
+        .textMaxNumberOfLines:NSInteger.self,
+
+        .subtitleText:String.self,
+        .subtitleFont:UIFont.self,
+        .subtitleTextColor:UIColor?.self,
+        .subtitleTextAlignment:NSTextAlignment.self,
+        .subtitleTextShadowColor:UIColor?.self,
+        .subtitleTextShadowOffset:CGSize.self,
+        .subtitleTextMaxNumberOfLines:Int.self,
+        .statusBarStyle:UIStatusBarStyle.self,
+
+        .backgroundColor:UIColor.self,
+        .backgroundView :UIView.self,
+        .image:UIImage?.self,
+        .imageContentMode:UIView.ContentMode.self,
+        .imageAlignment:CRToastAccessoryViewAlignment.self,
+        .imageTint:UIColor.self,
+        .showActivityIndicator:Bool.self,
+        .activityIndicatorViewStyle:UIActivityIndicatorView.Style.self,
+        .activityIndicatorAlignment:CRToastAccessoryViewAlignment.self,
+
+        .interactionResponders :[CRToastInteractionResponder].self,
+        .forceUserInteraction:Bool.self,
+
+        .autorotate:Bool.self,
+
+        .captureDefaultWindow:Bool.self,
+    ]
     
     fileprivate init() {
         if let d = UIApplication.shared.delegate?.window??.tintColor {
@@ -458,76 +512,26 @@ public struct CROptions {
         } else {
             backgroundColor = UIColor.red
         }
-        
-        toastKeyClassMap = [
-            .type:CRToastType.self,
-            .preferredHeight:CGFloat.self,
-            .preferredPadding:Float.self,
-            .presentationType:CRToastPresentationType.self,
-            .underStatusBar:Bool.self,
-            .keepNavigationBarBorder:Bool.self,
-            .identifier:String.self,
-            
-            .animationInType:CRToastAnimationType.self,
-            .animationOutType:CRToastAnimationType.self,
-            .animationInDirection:CRToastAnimationDirection.self,
-            .animationOutDirection:CRToastAnimationDirection.self,
-            .animationInTimeInterval:TimeInterval.self,
-            .animationOutTimeInterval:TimeInterval.self,
-            .timeInterval:TimeInterval.self,
-            
-            .springDamping:CGFloat.self,
-            .springInitialVelocity:CGFloat.self,
-            .gravityMagnitude:CGFloat.self,
-            
-            .text:String.self,
-            .font:UIFont.self,
-            .textColor:UIColor.self,
-            .textAlignment:NSTextAlignment.self,
-            .textShadowColor:UIColor?.self,
-            .textShadowOffset:CGSize.self,
-            .textMaxNumberOfLines:NSInteger.self,
-            
-            .subtitleText:String.self,
-            .subtitleFont:UIFont.self,
-            .subtitleTextColor:UIColor?.self,
-            .subtitleTextAlignment:NSTextAlignment.self,
-            .subtitleTextShadowColor:UIColor?.self,
-            .subtitleTextShadowOffset:CGSize.self,
-            .subtitleTextMaxNumberOfLines:Int.self,
-            .statusBarStyle:UIStatusBarStyle.self,
-            
-            .backgroundColor:UIColor.self,
-            .backgroundView :UIView.self,
-            .image:UIImage?.self,
-            .imageContentMode:UIView.ContentMode.self,
-            .imageAlignment:CRToastAccessoryViewAlignment.self,
-            .imageTint:UIColor.self,
-            .showActivityIndicator:Bool.self,
-            .activityIndicatorViewStyle:UIActivityIndicatorView.Style.self,
-            .activityIndicatorAlignment:CRToastAccessoryViewAlignment.self,
-            
-            .interactionResponders :[CRToastInteractionResponder].self,
-            .forceUserInteraction:Bool.self,
-            
-            .autorotate:Bool.self,
-            
-            .captureDefaultWindow:Bool.self,
-        ]
-    }
+     }
     
     private static var _default : CROptions? = nil
     public static var `default` : CROptions {
-        if let s = _default { return s }
-        else {
-            let s = CROptions()
-            _default = s
-            return s
+        get {
+            if let s = _default {
+                return s
+            } else {
+                let s = CROptions()
+                _default = s
+                return s
+            }
+        }
+        set {
+            _default = newValue
         }
     }
     
     public init(options: [CRToastOptionKey:Any]) {
-        self.init()
+        self.init(CROptions.default)
         /*
         // useful for obc type checking, less so in swift
         let cleanOptions = options.filter { (arg0) -> Bool in
@@ -594,8 +598,65 @@ public struct CROptions {
         
         if let v = cleanOptions[.captureDefaultWindow] as? Bool { captureWindow = v }
     }
-    
-    
+
+    // copy initializer
+    public init(_ other: CROptions) {
+        self.init()
+
+        self.toastType  = other.toastType
+        self.preferredHeight = other.preferredHeight
+        self.preferredPadding = other.preferredPadding
+        self.presentationType = other.presentationType
+        self.underStatusBar = other.underStatusBar
+        self.keepNavigationBarBorder = other.keepNavigationBarBorder
+        self.identifier = other.identifier
+
+        self.animationTypeIn  = other.animationTypeIn
+        self.animationTypeOut  = other.animationTypeOut
+        self.animationInDirection  = other.animationInDirection
+        self.animationOutDirection  = other.animationOutDirection
+        self.animateInTimeInterval  = other.animateInTimeInterval
+        self.animateOutTimeInterval  = other.animateOutTimeInterval
+        self.timeInterval  = other.timeInterval
+
+        self.springDamping  = other.springDamping
+        self.springInitialVelocity  = other.springInitialVelocity
+        self.gravityMagnitude  = other.gravityMagnitude
+
+        self.text  = other.text
+        self.font  = other.font
+        self.textColor  = other.textColor
+        self.textAlignment  = other.textAlignment
+        self.textShadowColor  = other.textShadowColor
+        self.textShadowOffset = other.textShadowOffset
+        self.textMaxNumberOfLines  = other.textMaxNumberOfLines
+
+        self.subtitleText  = other.subtitleText
+        self.subtitleFont  = other.subtitleFont
+        self.subtitleTextColor  = other.subtitleTextColor
+        self.subtitleTextAlignment  = other.subtitleTextAlignment
+        self.subtitleTextShadowColor  = other.subtitleTextShadowColor
+        self.subtitleTextShadowOffset  = other.subtitleTextShadowOffset
+        self.subtitleTextMaxNumberOfLines = other.subtitleTextMaxNumberOfLines
+        self.statusBarStyle  = other.statusBarStyle
+
+        self.backgroundColor = other.backgroundColor
+        self.backgroundView  = other.backgroundView
+        self.image  = other.image
+        self.imageContentMode  = other.imageContentMode
+        self.imageAlignment  = other.imageAlignment
+        self.imageTint  = other.imageTint
+        self.showActivityIndicator  = other.showActivityIndicator
+        self.activityIndicatorViewStyle  = other.activityIndicatorViewStyle
+        self.activityIndicatorAlignment  = other.activityIndicatorAlignment
+
+        self.interactionResponders  = other.interactionResponders
+        self.forceUserInteraction  = other.forceUserInteraction
+
+        self.autoRotate  = other.autoRotate
+
+        self.captureWindow  = other.captureWindow
+    }
 }
 
 public typealias CRToastInteractionResponderBlock = (_ interactionType: CRToastInteractionType)->Void
