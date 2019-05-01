@@ -616,8 +616,7 @@ extension CRToastManager : UICollisionBehaviorDelegate {
 // MARK: -
 extension CRToast {
     static func setDefaultOptions(_ options : CROptions) {
-        // TODO
-        // CROptions.default = options
+        CROptions.default = options
     }
     static func setDefaultOptions(_ options : [CRToastOptionKey : Any]) {
         setDefaultOptions(CROptions(options: options))
