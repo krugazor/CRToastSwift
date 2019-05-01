@@ -529,7 +529,15 @@ public struct CROptions {
             _default = newValue
         }
     }
-    
+
+    fileprivate func coerceToCGFloat(_ v:Any?) -> CGFloat? {
+        if let r = v as? CGFloat { return r }
+        if let r = v as? Float { return CGFloat(r) }
+        if let r = v as? Double { return CGFloat(r) }
+        if let r = v as? Int { return CGFloat(r) }
+
+        return nil
+    }
     public init(options: [CRToastOptionKey:Any]) {
         self.init(CROptions.default)
         /*
@@ -545,8 +553,12 @@ public struct CROptions {
         
         let cleanOptions = options
         if let v = cleanOptions[.type] as? CRToastType { toastType = v }
+
+        // Unfortunately, typecoertion with numbers in Swift is wonky
         if let v = cleanOptions[.preferredHeight] as? CGFloat { preferredHeight = v }
+        else if let v = coerceToCGFloat(cleanOptions[.preferredHeight]) { preferredHeight = v }
         if let v = cleanOptions[.preferredPadding] as? Float { preferredPadding = CGFloat(v) } // UISlider gives FLOAT
+        else if let v = coerceToCGFloat(cleanOptions[.preferredPadding]) { preferredHeight = v }
         if let v = cleanOptions[.presentationType] as? CRToastPresentationType { presentationType = v }
         if let v = cleanOptions[.underStatusBar] as? Bool { underStatusBar = v }
         if let v = cleanOptions[.keepNavigationBarBorder] as? Bool { keepNavigationBarBorder = v }
@@ -561,9 +573,12 @@ public struct CROptions {
         if let v = cleanOptions[.timeInterval] as? TimeInterval { timeInterval = v }
         
         if let v = cleanOptions[.springDamping] as? CGFloat { springDamping = v }
+        else if let v = coerceToCGFloat(cleanOptions[.springDamping]) { preferredHeight = v }
         if let v = cleanOptions[.springInitialVelocity] as? CGFloat { springInitialVelocity = v }
+        else if let v = coerceToCGFloat(cleanOptions[.springInitialVelocity]) { preferredHeight = v }
         if let v = cleanOptions[.gravityMagnitude] as? CGFloat { gravityMagnitude = v }
-        
+        else if let v = coerceToCGFloat(cleanOptions[.gravityMagnitude]) { preferredHeight = v }
+
         if let v = cleanOptions[.text] as? String { text = v }
         if let v = cleanOptions[.font] as? UIFont { font = v }
         if let v = cleanOptions[.textColor] as? UIColor { textColor = v }
